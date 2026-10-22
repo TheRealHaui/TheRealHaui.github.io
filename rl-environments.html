@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SQL Tuning RL Environment · Michael Hausegger</title>
+  <meta name="description" content="An RL environment that gives coding agents a slow SQL query and scores them on logical reads, not wall-clock time or plan shape. Monotonic partial credit, clean-room grading, results on current frontier models.">
+  <link rel="canonical" href="https://hausegger.tech/rl-environments.html">
+  <meta name="theme-color" content="#4472c4">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://hausegger.tech/rl-environments.html">
+  <meta property="og:title" content="Can a model tune a slow SQL query all the way to the reference solution?">
+  <meta property="og:description" content="An RL environment scored on logical reads. Frontier models fully solve it 1–3 times in 5. Available to license or as a custom build.">
+  <meta property="og:image" content="https://hausegger.tech/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="./" aria-label="Michael Hausegger, home">
+        <span class="brand-mark" aria-hidden="true">MH</span>
+        <span class="brand-name">Michael Hausegger</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a class="nav-rl" href="#results">Results</a></li>
+          <li class="nav-optional"><a href="#design">Design</a></li>
+          <li class="nav-optional"><a href="#offer">Offer</a></li>
+          <li class="nav-optional"><a href="./">Home</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!--
+      CONFIDENTIALITY: the environment's source and internal docs are proprietary and shared
+      only under NDA. The owner approved publishing the design rationale and the measurements
+      below (2026-10-20). Still never published here: source code, prompts, fixture files,
+      local paths, per-run costs, or Prime Intellect trace URLs.
+    -->
+    <section class="band page-hero">
+      <div class="container">
+        <span class="eyebrow">RL environment · SQL performance tuning</span>
+        <h1>Did the agent make a real database cheaper to run?</h1>
+        <p class="lead">An RL environment that gives a coding agent a slow SQL query, its own copy of the database and a shell, and asks it to tune the query. It is scored on the work a database server actually does, so the textbook answer doesn't get full marks.</p>
+        <div class="btn-row mt">
+          <a class="btn btn-primary" href="mailto:michael.hausegger@hausegger.tech?subject=RL%20environment%20demo%20under%20NDA">Request a demo under NDA</a>
+          <a class="btn btn-ghost" href="#results">See the results</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Why logical reads ================= -->
+    <section class="section" id="metric" aria-labelledby="metric-title">
+      <div class="container split">
+        <div class="prose">
+          <div class="section-head tight">
+            <span class="eyebrow">The metric</span>
+            <h2 id="metric-title">Logical reads, not wall-clock time</h2>
+          </div>
+          <p>On a laptop, tuning means "finish as fast as possible". On a server with many clients it means something else: use as few resources as possible, so the same hardware can serve as many clients as possible.</p>
+          <p>For a database query, that resource is the blocks it reads. Not rows, not table accesses, not a clean-looking execution plan. A plan shows what the engine <em>intends</em> to do, not necessarily what it does. So the environment measures pages read and rewards nothing else.</p>
+          <p>Concretely: page-cache hits plus page-cache misses, meaning every page the engine asked for, whether it was already in memory or not. That makes the number independent of cache state and of the operating system. Oracle DBAs know the same idea as <em>consistent gets</em>.</p>
+          <p>The agent submits two things: the rewritten query, and any supporting DDL such as indexes or <code>ANALYZE</code>. There are two tasks today, of increasing difficulty.</p>
+        </div>
+        <div class="prose">
+          <div class="section-head tight">
+            <span class="eyebrow">What trips models up</span>
+            <h2>The textbook answer</h2>
+          </div>
+          <p>"Add the obvious indexes until the plan shows no full scans" is all over the internet, and a model trained on it converges there. The usual heuristics report success while the query stays far more expensive than it needs to be.</p>
+          <p>Reaching the reference solution means reading what the database actually did, not what it planned to do. That gap separates a senior DBA from a checklist, and it's the gap this environment measures. <a href="#textbook">See the numbers</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= The textbook answer =================
+         Deliberately told WITHOUT specifics (no DDL, table/column names, query trap or page-count
+         matrix): publishing them would leak Task 1's solution into web crawls and ruin it as a
+         held-out eval. The full numbers stay in docs/grading.md, shared only under NDA. -->
+    <section class="section section-alt" id="textbook" aria-labelledby="textbook-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Why not plan shape</span>
+          <h2 id="textbook-title">Two textbook indexes made the query almost 4× more expensive</h2>
+          <p>In one 20-run batch, three runs submitted a correct rewrite together with two join indexes any code reviewer would approve. The query read almost four times more pages than the same rewrite with no indexes at all. Meanwhile the execution plan looked better: full-scan steps fell by more than half. A grader that scores plan shape would have paid for that. This one scores it 0.0.</p>
+        </div>
+        <div class="cards cols-3">
+          <article class="card">
+            <h3>Plausible indexes can hurt</h3>
+            <p>An index can talk the planner into a worse join order. Only measuring the work the database actually did catches that. The execution plan won't.</p>
+          </article>
+          <article class="card">
+            <h3>Half the answer is worth nothing</h3>
+            <p>Neither part of the reference solution pays on its own. Some indexes only help once the query is rewritten so the planner can use them.</p>
+          </article>
+          <article class="card">
+            <h3>Rewrite and indexes arrive together</h3>
+            <p>The right indexes do nothing for the untuned query, and the rewrite alone captures only part of the gain. The scoring forces the agent to find both, the way a senior DBA would.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Results ================= -->
+    <section class="section" id="results" aria-labelledby="results-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Results</span>
+          <h2 id="results-title">Frontier models succeed sometimes, but not reliably</h2>
+          <p>That band is where an environment is useful for training. Every model earns partial credit most of the time, and the best ones still miss the reference solution in about half their runs.</p>
+        </div>
+
+        <div class="split">
+          <figure class="chart">
+            <h3>Task 2: can a model tune the query all the way to the reference solution?</h3>
+            <p class="sub">Scored on logical reads. Original query: 11,238 pages. Reference solution: 115 pages.</p>
+            <div class="legend" aria-hidden="true">
+              <span><i class="dot full"></i> fully solved</span>
+              <span><i class="dot partial"></i> partial credit</span>
+              <span><i class="dot"></i> no credit</span>
+            </div>
+            <ul class="chart-rows">
+              <li class="chart-row">
+                <span class="sr-only">Claude Opus 5: 3 of 5 runs fully solved, mean reward 0.69</span>
+                <span class="model" aria-hidden="true">Claude Opus 5</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot partial" title="0.24"></i><i class="dot partial" title="0.24"></i></span>
+                <span class="score" aria-hidden="true">3/5<span class="avg">avg 0.69</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">Claude Fable 5: 2 of 5 runs fully solved, mean reward 0.89</span>
+                <span class="model" aria-hidden="true">Claude Fable 5</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">2/5<span class="avg">avg 0.89</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">Gemini 3.6 Flash: 1 of 5 runs fully solved, mean reward 0.86</span>
+                <span class="model" aria-hidden="true">Gemini 3.6 Flash</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.83"></i><i class="dot partial" title="0.83"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">1/5<span class="avg">avg 0.86</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">GLM 5.2: 1 of 5 runs fully solved, mean reward 0.87</span>
+                <span class="model" aria-hidden="true">GLM 5.2</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot partial" title="0.87"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.85"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">1/5<span class="avg">avg 0.87</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">DeepSeek V4 Flash: 0 of 5 runs fully solved, mean reward 0.41</span>
+                <span class="model" aria-hidden="true">DeepSeek V4 Flash</span>
+                <span class="dots" aria-hidden="true"><i class="dot partial" title="0.80"></i><i class="dot partial" title="0.80"></i><i class="dot partial" title="0.24"></i><i class="dot partial" title="0.24"></i><i class="dot" title="0.00"></i></span>
+                <span class="score" aria-hidden="true">0/5<span class="avg">avg 0.41</span></span>
+              </li>
+            </ul>
+            <figcaption class="foot">One dot per run, 5 runs per model. DeepSeek V4 Flash: first 5 of 10 runs shown; none of the 10 fully solved it.</figcaption>
+          </figure>
+
+          <div class="prose">
+            <h3>What a pass/fail eval would hide</h3>
+            <p>Solve rate and mean reward disagree, and both are informative. Claude Fable 5 averages <strong>0.89</strong> but reaches the reference solution in only 2 of 5 runs. It gets close every time. Claude Opus 5 reaches it 3 times, yet averages <strong>0.69</strong>, because its misses fall back to 0.24.</p>
+            <p>A binary grader would score both as "sometimes passes". A monotonic reward shows which model is consistently close and which one is all-or-nothing. A policy can learn from that difference.</p>
+            <h3 class="mt">A difficulty ladder, not a single task</h3>
+            <p>Task 1 is the calibration tier: frontier models saturate it, while smaller and open models still spread out. Task 2 is where the frontier separates. A training curriculum needs both.</p>
+          </div>
+        </div>
+
+        <div class="mt-lg">
+          <h3>Task 1: calibration tier</h3>
+          <p class="muted">Original query: 978 pages. Reference solution: 149 pages.</p>
+          <div class="table-wrap">
+            <table>
+              <caption>Gemini 3.6 Flash: one of 10 runs was interrupted and is not scored. "Fully solved" means reward 1.00; DeepSeek V4 Flash had 5 more runs at 0.99.</caption>
+              <thead>
+                <tr><th>Model</th><th class="num">Runs scored</th><th class="num">Fully solved</th><th class="num">Mean reward</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Claude Opus 5</td><td class="num">10</td><td class="num">10</td><td class="num">1.00</td></tr>
+                <tr><td>GPT-5.6 Sol</td><td class="num">10</td><td class="num">10</td><td class="num">1.00</td></tr>
+                <tr><td>Gemini 3.6 Flash</td><td class="num">9</td><td class="num">8</td><td class="num">0.96</td></tr>
+                <tr><td>GLM 5.2</td><td class="num">10</td><td class="num">5</td><td class="num">0.84</td></tr>
+                <tr><td>DeepSeek V4 Flash</td><td class="num">20</td><td class="num">4</td><td class="num">0.77</td></tr>
+                <tr><td>DeepSeek V4 Pro</td><td class="num">20</td><td class="num">2</td><td class="num">0.66</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Design ================= -->
+    <section class="section section-alt" id="design" aria-labelledby="design-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Reward design</span>
+          <h2 id="design-title">Built for training, not just evaluation</h2>
+        </div>
+        <div class="cards cols-3">
+          <article class="card">
+            <h3>Monotonic partial credit</h3>
+            <p>0.0 for no improvement on the original query, 1.0 for matching the reference solution, and every page saved in between counts. The scale is logarithmic, because tuning gains are multiplicative: a DBA reports "ten times fewer reads", not "3,867 fewer pages".</p>
+          </article>
+          <article class="card">
+            <h3>Deterministic</h3>
+            <p>The same submission always gets the same score. Both ends of the scale are measured in the same container as the submission, never read from a stored number, because a page count is only valid for one database engine version.</p>
+          </article>
+          <article class="card">
+            <h3>Correctness gates everything</h3>
+            <p>A submission that doesn't apply, doesn't run, or returns different rows from the original scores 0.0, however few pages it read. Fast and wrong is worth nothing.</p>
+          </article>
+          <article class="card">
+            <h3>Clean-room grading</h3>
+            <p>The agent's own database copy is a scratch area to experiment on, and that's part of the job. Grading applies only the submitted query and DDL to a fresh copy. That closes the cheapest trick: deleting the data makes any query fast.</p>
+          </article>
+          <article class="card">
+            <h3>Rules are enforced, not just stated</h3>
+            <p>The prompt rules out composite indexes, partial indexes and materialized views, and the grader checks all three. Each of them, unchecked, would beat the reference solution outright, so a rule that's only stated is no rule at all.</p>
+          </article>
+          <article class="card">
+            <h3>Reproducible and offline</h3>
+            <p>One Docker container per rollout, in a digest-pinned image with the database engine version asserted at build time. The image runs with no network egress, so the environment works in a locked-down training cluster.</p>
+          </article>
+        </div>
+        <p class="fine-print">Built on Prime Intellect's <a href="https://github.com/PrimeIntellect-ai/verifiers">verifiers</a> framework, using its bash harness and Docker runtime.</p>
+      </div>
+    </section>
+
+    <!-- ================= Offer ================= -->
+    <section class="band" id="offer" aria-labelledby="offer-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Work with me</span>
+          <h2 id="offer-title">Tasks, environments, and reviews</h2>
+          <p>I write tasks the way I tuned production Oracle systems for 20 years: starting from what the database actually does. That domain depth is what makes a task hard in the right way.</p>
+        </div>
+        <div class="cards cols-3">
+          <article class="card">
+            <h3>License the tasks</h3>
+            <p>Use the existing SQL performance-tuning tasks and grader in your own training or evaluation pipeline. Delivered as a verifiers environment with a pinned container image.</p>
+          </article>
+          <article class="card">
+            <h3>Custom environments</h3>
+            <p>New tasks and environments for database and performance engineering, calibrated to the difficulty band you need. SQLite today; PostgreSQL and Oracle, which report logical reads directly, are next.</p>
+          </article>
+          <article class="card">
+            <h3>Reward &amp; eval review</h3>
+            <p>A second pair of eyes on your environments: reward-hacking paths, unenforced rules, non-determinism, and metrics that measure the machine instead of the model.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Evidence ================= -->
+    <section class="section" id="evidence" aria-labelledby="evidence-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Evidence</span>
+          <h2 id="evidence-title">Raw eval output</h2>
+          <p>The model, run count and reward lines straight from the verifiers eval runs behind the numbers above. Click to enlarge.</p>
+        </div>
+        <div class="evidence-group">
+          <h3>Task 2</h3>
+          <div class="evidence">
+            <figure><a href="assets/img/evals/task2-claude-opus-5.png"><img src="assets/img/evals/task2-claude-opus-5.png" alt="Eval summary, Task 2, Claude Opus 5: 5 runs, mean reward 0.69" loading="lazy" width="1534" height="51"></a><figcaption>Claude Opus 5</figcaption></figure>
+            <figure><a href="assets/img/evals/task2-claude-fable-5.png"><img src="assets/img/evals/task2-claude-fable-5.png" alt="Eval summary, Task 2, Claude Fable 5: 5 runs, mean reward 0.89" loading="lazy" width="1539" height="51"></a><figcaption>Claude Fable 5</figcaption></figure>
+            <figure><a href="assets/img/evals/task2-gemini-3.6-flash.png"><img src="assets/img/evals/task2-gemini-3.6-flash.png" alt="Eval summary, Task 2, Gemini 3.6 Flash: 5 runs, mean reward 0.86" loading="lazy" width="1538" height="51"></a><figcaption>Gemini 3.6 Flash</figcaption></figure>
+            <figure><a href="assets/img/evals/task2-glm-5.2.png"><img src="assets/img/evals/task2-glm-5.2.png" alt="Eval summary, Task 2, GLM 5.2: 5 runs, mean reward 0.87" loading="lazy" width="1542" height="51"></a><figcaption>GLM 5.2</figcaption></figure>
+            <figure><a href="assets/img/evals/task2-deepseek-v4-flash.png"><img src="assets/img/evals/task2-deepseek-v4-flash.png" alt="Eval summary, Task 2, DeepSeek V4 Flash: 10 runs, mean reward 0.36" loading="lazy" width="1541" height="51"></a><figcaption>DeepSeek V4 Flash</figcaption></figure>
+          </div>
+        </div>
+        <div class="evidence-group">
+          <h3>Task 1</h3>
+          <div class="evidence">
+            <figure><a href="assets/img/evals/task1-claude-opus-5.png"><img src="assets/img/evals/task1-claude-opus-5.png" alt="Eval summary, Task 1, Claude Opus 5: 10 runs, mean reward 1.00" loading="lazy" width="1545" height="51"></a><figcaption>Claude Opus 5</figcaption></figure>
+            <figure><a href="assets/img/evals/task1-gpt-5.6-sol.png"><img src="assets/img/evals/task1-gpt-5.6-sol.png" alt="Eval summary, Task 1, GPT-5.6 Sol: 10 runs, mean reward 1.00" loading="lazy" width="1546" height="51"></a><figcaption>GPT-5.6 Sol</figcaption></figure>
+            <figure><a href="assets/img/evals/task1-gemini-3.6-flash.png"><img src="assets/img/evals/task1-gemini-3.6-flash.png" alt="Eval summary, Task 1, Gemini 3.6 Flash: 9 scored runs, mean reward 0.96" loading="lazy" width="1536" height="51"></a><figcaption>Gemini 3.6 Flash</figcaption></figure>
+            <figure><a href="assets/img/evals/task1-glm-5.2.png"><img src="assets/img/evals/task1-glm-5.2.png" alt="Eval summary, Task 1, GLM 5.2: 10 runs, mean reward 0.84" loading="lazy" width="1529" height="51"></a><figcaption>GLM 5.2</figcaption></figure>
+            <figure><a href="assets/img/evals/task1-deepseek-v4-flash.png"><img src="assets/img/evals/task1-deepseek-v4-flash.png" alt="Eval summary, Task 1, DeepSeek V4 Flash: 20 runs, mean reward 0.77" loading="lazy" width="1550" height="51"></a><figcaption>DeepSeek V4 Flash</figcaption></figure>
+            <figure><a href="assets/img/evals/task1-deepseek-v4-pro.png"><img src="assets/img/evals/task1-deepseek-v4-pro.png" alt="Eval summary, Task 1, DeepSeek V4 Pro: 20 runs, mean reward 0.66" loading="lazy" width="1545" height="51"></a><figcaption>DeepSeek V4 Pro</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CTA ================= -->
+    <section class="section section-alt cta-band" id="contact" aria-labelledby="cta-title">
+      <div class="container">
+        <h2 id="cta-title">Training or evaluating agents on real engineering tasks?</h2>
+        <p class="muted">I'm happy to demo the environment under NDA, walk through the reward design, or scope a custom build.</p>
+        <div class="btn-row mt">
+          <a class="btn btn-primary" href="mailto:michael.hausegger@hausegger.tech?subject=RL%20environment%20demo%20under%20NDA">Request a demo under NDA</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/michael-hausegger/">Message me on LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Michael Hausegger</span>
+      <nav aria-label="Legal">
+        <a href="./">Home</a>
+        <a href="impressum.html">Impressum</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- GoatCounter: cookieless analytics, self-hosted script. See index.html for the rationale. -->
+  <script data-goatcounter="https://hausegger.goatcounter.com/count" async src="assets/js/count.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+  Source for assets/img/og-image.png (the LinkedIn/Twitter share card, 1200×630).
+  Kept as HTML so the card uses the same font, colors and data as the site.
+  Regenerate after changing results:
+    google-chrome --headless=new --hide-scrollbars --window-size=1200,630 \
+      --screenshot=assets/img/og-image.png tools/og/og.html
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Inter"; src: url("../../assets/fonts/inter-latin-var.woff2") format("woff2"); font-weight: 100 900; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: "Inter", sans-serif; background: #0f1b33; color: #eef2f9;
+    border-top: 10px solid #4472c4; display: grid; grid-template-columns: 1fr 560px;
+    gap: 48px; padding: 56px 64px 48px;
+  }
+  .eyebrow { color: #8fb0ea; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; font-size: 18px; }
+  h1 { font-size: 50px; line-height: 1.12; letter-spacing: -.02em; font-weight: 750; margin: 18px 0 22px; color: #fff; }
+  p { font-size: 22px; line-height: 1.45; color: #b7c3d9; }
+  .who { position: absolute; left: 64px; bottom: 44px; display: flex; align-items: center; gap: 14px; font-size: 22px; font-weight: 650; color: #fff; }
+  .who i { width: 44px; height: 44px; border-radius: 10px; background: #4472c4; display: grid; place-items: center; font-style: normal; font-size: 17px; font-weight: 750; }
+  .who span { color: #8fb0ea; font-weight: 500; }
+  .chart { background: #fbfbfa; color: #141a24; border-radius: 16px; padding: 28px 30px; align-self: center; }
+  .chart h2 { font-size: 22px; line-height: 1.25; letter-spacing: -.01em; margin-bottom: 6px; }
+  .sub { font-size: 15px; color: #5f6979; margin-bottom: 10px; }
+  .row { display: grid; grid-template-columns: 170px 1fr 50px; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #e8e8e4; }
+  .m { font-weight: 600; font-size: 17px; }
+  .s { font-weight: 750; font-size: 19px; text-align: right; }
+  .d { display: flex; gap: 6px; justify-content: flex-end; }
+  .d b { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #c9ced6; }
+  .d b.f { background: #4472c4; border-color: #4472c4; }
+  .d b.p { background: #c7d6ef; border-color: #7c9bd3; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="eyebrow">RL Environment · SQL performance</div>
+    <h1>Did the agent make a real database cheaper to run?</h1>
+    <p>Scored on logical reads, not wall-clock time or plan shape. Monotonic partial credit, clean-room grading.</p>
+  </div>
+  <div class="chart">
+    <h2>Fully solved to the reference solution</h2>
+    <div class="sub">Original query 11,238 pages → reference 115 pages</div>
+    <div class="row"><span class="m">Claude Opus 5</span><span class="d"><b class="f"></b><b class="f"></b><b class="f"></b><b class="p"></b><b class="p"></b></span><span class="s">3/5</span></div>
+    <div class="row"><span class="m">Claude Fable 5</span><span class="d"><b class="f"></b><b class="f"></b><b class="p"></b><b class="p"></b><b class="p"></b></span><span class="s">2/5</span></div>
+    <div class="row"><span class="m">Gemini 3.6 Flash</span><span class="d"><b class="f"></b><b class="p"></b><b class="p"></b><b class="p"></b><b class="p"></b></span><span class="s">1/5</span></div>
+    <div class="row"><span class="m">GLM 5.2</span><span class="d"><b class="f"></b><b class="p"></b><b class="p"></b><b class="p"></b><b class="p"></b></span><span class="s">1/5</span></div>
+  </div>
+  <div class="who"><i>MH</i>Michael Hausegger <span>· hausegger.tech</span></div>
+</body>
+</html>

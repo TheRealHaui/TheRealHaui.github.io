@@ -1,0 +1,9 @@
+# Private source material used to write the site. Never publish:
+# Resume.pdf contains a phone number, LinkedIn.pdf shows private analytics.
+LinkedIn.pdf
+Resume.pdf
+Post.pdf
+prompt.txt
+
+# Build helpers that only exist to render og-image.png
+tools/og/*.png

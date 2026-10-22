@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Michael Hausegger · Solutions Architect &amp; RL Environments</title>
+  <meta name="description" content="Senior Solutions Architect with 20+ years in enterprise software, Oracle performance, cloud-native platforms and security. Builds verifiable-reward RL environments that train coding agents on real database performance engineering.">
+  <link rel="canonical" href="https://hausegger.tech/">
+  <meta name="theme-color" content="#4472c4">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+
+  <!-- Open Graph / Twitter: LinkedIn is the main traffic source, so the share card matters.
+       og:image must be an absolute URL or LinkedIn ignores it. -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hausegger.tech/">
+  <meta property="og:title" content="Michael Hausegger · Solutions Architect &amp; RL Environments">
+  <meta property="og:description" content="RL environments that grade what the database actually did, built by a 20-year enterprise architect. Freelance, remote, 4+ hrs daily overlap with US Eastern.">
+  <meta property="og:image" content="https://hausegger.tech/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preload" href="assets/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://hausegger.tech/#person",
+        "name": "Michael Hausegger",
+        "jobTitle": "Senior Solutions Architect",
+        "image": "https://hausegger.tech/assets/img/michael-hausegger.jpg",
+        "url": "https://hausegger.tech/",
+        "email": "mailto:michael.hausegger@hausegger.tech",
+        "address": { "@type": "PostalAddress", "addressLocality": "Graz", "addressCountry": "AT" },
+        "alumniOf": "FH JOANNEUM University of Applied Sciences",
+        "knowsAbout": ["Reinforcement learning environments", "LLM evaluation", "SQL performance tuning", "Oracle Database", "Java", "Kubernetes", "OpenShift", "Information security", "ISO 27001"],
+        "sameAs": ["https://www.linkedin.com/in/michael-hausegger/", "https://github.com/TheRealHaui"]
+      },
+      {
+        "@type": "ProfessionalService",
+        "name": "Michael Hausegger — IT Architecture & RL Environments",
+        "url": "https://hausegger.tech/",
+        "founder": { "@id": "https://hausegger.tech/#person" },
+        "areaServed": "Worldwide",
+        "serviceType": ["RL environment development", "Solution architecture", "Database performance tuning", "Cloud-native consulting", "Security consulting"]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="#top" aria-label="Michael Hausegger, home">
+        <span class="brand-mark" aria-hidden="true">MH</span>
+        <span class="brand-name">Michael Hausegger</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <ul>
+          <li><a class="nav-rl" href="#rl">RL Environments</a></li>
+          <li class="nav-optional"><a href="#services">Services</a></li>
+          <li class="nav-optional"><a href="#experience">Experience</a></li>
+          <li class="nav-optional"><a href="#open-source">Open Source</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- ================= Hero ================= -->
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Freelance · Remote</span>
+          <div class="hero-id">
+            <img class="portrait" src="assets/img/michael-hausegger.jpg" alt="Portrait of Michael Hausegger" width="112" height="112">
+            <h1>Michael Hausegger</h1>
+          </div>
+          <p class="role">Senior Solutions Architect for enterprise software, cloud-native platforms, and RL environments for LLM post-training.</p>
+          <p class="lead">I've spent 20+ years delivering enterprise software end to end: Java and Oracle performance, Kubernetes and OpenShift, security and compliance. I work out what the customer actually needs, then build it in their stack. I now also build verifiable-reward RL environments that train coding agents on real database performance work.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="#rl">See the RL environment</a>
+            <a class="btn btn-ghost" href="#contact">Get in touch</a>
+          </div>
+          <div class="meta">
+            <span>Graz, Austria</span>
+            <span>Remote, 4+ hrs daily overlap with US Eastern Time</span>
+            <span>English · German</span>
+          </div>
+        </div>
+        <ul class="facts">
+          <li><strong>20+ years of enterprise software</strong><span>Architecture, delivery and technical leadership</span></li>
+          <li><strong>Red Hat-certified Helm chart</strong><span>DynaCov Safety Automation, OpenShift ecosystem</span></li>
+          <li><strong>Merged into Guava, Commons, Jetty, Maven</strong><span>Open-source contributor across the Java ecosystem</span></li>
+          <li><strong>MSc Advanced Security Engineering</strong><span>Built an ISMS aligned with ISO 27001</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================= RL Environments (the featured section) ================= -->
+    <section class="band" id="rl" aria-labelledby="rl-title">
+      <div class="container">
+        <div class="band-intro">
+          <div class="copy">
+            <div class="section-head tight">
+              <span class="eyebrow">RL Environments · License or custom build</span>
+              <h2 id="rl-title">Did the agent make a real database cheaper to run?</h2>
+            </div>
+            <p>Most RL environments for coding agents check whether the agent produced the right answer. Mine check something harder. The agent gets a slow SQL query, its own copy of the database and a shell, and has to tune the query.</p>
+            <p>It is scored on <strong class="hl">logical reads</strong>: how many database pages the query really touches. Not wall-clock time, which mostly measures the machine. Not how clean the execution plan looks, which is what the engine <em>intends</em> to do, not what it does.</p>
+            <p>The task sits where an environment is useful for training: frontier models succeed sometimes, but not reliably.</p>
+            <div class="btn-row mt">
+              <a class="btn btn-primary" href="rl-environments.html">Explore the environment</a>
+              <a class="btn btn-ghost" href="mailto:michael.hausegger@hausegger.tech?subject=RL%20environment%20demo%20under%20NDA">Request a demo under NDA</a>
+            </div>
+          </div>
+
+          <!-- Task 2 results. One dot per run, sorted best-first. DeepSeek V4 Flash shows the first 5
+               completed rollouts of its 10-rollout run (865a5b88) so the chart matches the LinkedIn post.
+               Source: verifiers eval runs (screenshots in assets/img/evals/). -->
+          <figure class="chart">
+            <h3>Can a model tune a slow SQL query all the way to the reference solution?</h3>
+            <p class="sub">Scored on logical reads. Original query: 11,238 pages. Reference solution: 115 pages.</p>
+            <div class="legend" aria-hidden="true">
+              <span><i class="dot full"></i> fully solved</span>
+              <span><i class="dot partial"></i> partial credit</span>
+              <span><i class="dot"></i> no credit</span>
+            </div>
+            <ul class="chart-rows">
+              <li class="chart-row">
+                <span class="sr-only">Claude Opus 5: 3 of 5 runs fully solved, mean reward 0.69</span>
+                <span class="model" aria-hidden="true">Claude Opus 5</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot partial" title="0.24"></i><i class="dot partial" title="0.24"></i></span>
+                <span class="score" aria-hidden="true">3/5<span class="avg">avg 0.69</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">Claude Fable 5: 2 of 5 runs fully solved, mean reward 0.89</span>
+                <span class="model" aria-hidden="true">Claude Fable 5</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot full" title="1.00"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">2/5<span class="avg">avg 0.89</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">Gemini 3.6 Flash: 1 of 5 runs fully solved, mean reward 0.86</span>
+                <span class="model" aria-hidden="true">Gemini 3.6 Flash</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.83"></i><i class="dot partial" title="0.83"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">1/5<span class="avg">avg 0.86</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">GLM 5.2: 1 of 5 runs fully solved, mean reward 0.87</span>
+                <span class="model" aria-hidden="true">GLM 5.2</span>
+                <span class="dots" aria-hidden="true"><i class="dot full" title="1.00"></i><i class="dot partial" title="0.87"></i><i class="dot partial" title="0.86"></i><i class="dot partial" title="0.85"></i><i class="dot partial" title="0.75"></i></span>
+                <span class="score" aria-hidden="true">1/5<span class="avg">avg 0.87</span></span>
+              </li>
+              <li class="chart-row">
+                <span class="sr-only">DeepSeek V4 Flash: 0 of 5 runs fully solved, mean reward 0.41</span>
+                <span class="model" aria-hidden="true">DeepSeek V4 Flash</span>
+                <span class="dots" aria-hidden="true"><i class="dot partial" title="0.80"></i><i class="dot partial" title="0.80"></i><i class="dot partial" title="0.24"></i><i class="dot partial" title="0.24"></i><i class="dot" title="0.00"></i></span>
+                <span class="score" aria-hidden="true">0/5<span class="avg">avg 0.41</span></span>
+              </li>
+            </ul>
+            <figcaption class="foot">One dot per run, 5 runs per model. DeepSeek V4 Flash: first 5 of 10 runs shown; none of the 10 fully solved it. Michael Hausegger · SQL query-optimization RL environment.</figcaption>
+          </figure>
+        </div>
+
+        <div class="cards cols-3">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+            <h3>Graded on what the database did</h3>
+            <p>Logical reads are what a DBA tunes for on a shared server. In one batch, the two "obvious" join indexes made the query almost <strong class="hl">4× more expensive</strong> than adding no indexes at all, while the execution plan looked better.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 6-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg></div>
+            <h3>A gradient, not a cliff</h3>
+            <p>The reward is monotonic: every page saved raises the score, so a model gets a learning signal instead of a pass/fail cliff. Scores spread from 0.24 to 1.0, and the same submission always gets the same score.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <h3>Hard to game</h3>
+            <p>Grading happens in a clean room on a fresh copy of the database, so shortcuts that lower the page count without tuning anything don't pay. Every rule the prompt states, the grader enforces.</p>
+          </article>
+        </div>
+
+        <p class="band-note">Built on Prime Intellect's <a href="https://github.com/PrimeIntellect-ai/verifiers">verifiers</a> framework, running in a pinned, offline-capable Docker image. SQLite keeps the demo small and self-contained, but nothing in the approach is SQLite-specific. PostgreSQL and Oracle are next.</p>
+      </div>
+    </section>
+
+    <!-- ================= Services ================= -->
+    <section class="section" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Freelance services</span>
+          <h2 id="services-title">What I can do for your team</h2>
+          <p>Contract and project work, remote from Austria with daily overlap with US Eastern Time. I start from the problem, then pick the technology.</p>
+        </div>
+        <div class="cards cols-4">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></div>
+            <h3>Solution architecture</h3>
+            <p>Enterprise systems from requirements to production, primarily in Java/Spring and Java EE, with Go or Python where they fit. I also take technical leadership of the delivery.</p>
+            <p class="tags">Java · Spring · Java EE · API design · Microservices</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+            <h3>Database &amp; performance</h3>
+            <p>Oracle, PL/SQL and SQL tuning. I've taken queries and programs from minutes to seconds, and migrated legacy Oracle Forms to modern web stacks.</p>
+            <p class="tags">Oracle · PL/SQL · SQL tuning · PostgreSQL · SQLite</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></div>
+            <h3>Cloud-native &amp; DevOps</h3>
+            <p>Software built for Kubernetes and OpenShift, including a Red Hat-certified resilience-testing product. CI/CD on Jenkins and CircleCI, deployments on GCP.</p>
+            <p class="tags">GCP · Kubernetes · OpenShift · Istio · Prometheus · Grafana · Jenkins · CircleCI</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <h3>Security &amp; compliance</h3>
+            <p>Secure SDLC, code reviews and penetration testing, backed by six years as ISMS lead for the university management system developed at Graz University of Technology, and an MSc in security engineering.</p>
+            <p class="tags">ISO 27001 · Secure SDLC · Pentesting · Burp Suite · Kali</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Experience ================= -->
+    <section class="section section-alt" id="experience" aria-labelledby="experience-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Track record</span>
+          <h2 id="experience-title">Experience</h2>
+        </div>
+        <div class="two-col">
+          <ol class="timeline">
+            <li class="current">
+              <span class="when">2026 – present</span>
+              <h3>RL Environment &amp; Eval Engineer (LLM post-training)</h3>
+              <div class="org">Independent</div>
+              <ul>
+                <li>SQL query-optimization RL environment on Prime Intellect verifiers. The reward comes from SQLite logical reads, correctness is gated by comparing result sets, and every rollout runs in its own Docker container.</li>
+                <li>Calibrated to discriminate rather than saturate: on the hard task, frontier models fully solve 1–3 of 5 runs.</li>
+              </ul>
+            </li>
+            <li class="current">
+              <span class="when">2022 – present</span>
+              <h3>Founder &amp; Principal Technical Architect</h3>
+              <div class="org"><a href="https://www.safetyautomation.ai/">DynaCov Inc.</a> · US start-up, Google for Startups member</div>
+              <ul>
+                <li>Designed and built DynaCov Safety Automation, a resilience-testing platform for Kubernetes and OpenShift aimed at banking and finance. Go and Istio, with verdicts evaluated against Prometheus metrics. <a href="https://github.com/openshift-helm-charts/charts/pull/3125">Helm chart</a> and <a href="https://catalog.redhat.com/en/software/container-stacks/detail/69cd46f81b5d2953b1b5d7d4#overview">container image</a> certified by Red Hat.</li>
+                <li>Re-engineered the EvoSuite test generator to run distributed on GCP (124-core VMs, Pub/Sub) and feed results into a custom IntelliJ plugin.</li>
+                <li>Owned the whole technical foundation: cloud, CI/CD, DevOps and code architecture, working with co-founders in Silicon Valley and Switzerland.</li>
+              </ul>
+            </li>
+            <li>
+              <span class="when">2018 – 2022</span>
+              <h3>Senior Software Architect &amp; DevOps Lead</h3>
+              <div class="org">CodeLabs GmbH · client: a Swiss consulting company</div>
+              <ul>
+                <li>Owned the architecture of a new Java/Vaadin test-automation framework for testing Avaloq banking software, and set its technical direction.</li>
+                <li>Built the CI/CD pipelines (Jenkins, later CircleCI) and ran deployments on Google Cloud Platform.</li>
+              </ul>
+            </li>
+            <li>
+              <span class="when">2002 – 2017</span>
+              <h3>Graz University of Technology</h3>
+              <div class="org">Software development department, building the university's commercial management system</div>
+              <ul>
+                <li>Roles over 15 years: Oracle expert → team lead &amp; technical product manager → IT security expert &amp; ISMS lead → test automation.</li>
+                <li>Built core Oracle and PL/SQL applications for a commercial university management system, and tuned their performance.</li>
+                <li>Led a development team and owned a product segment, including customer contact, training and hiring.</li>
+                <li>Built an ISMS aligned with ISO 27001, ran security audits and penetration tests, and served on the university's Data Protection Advisory Board.</li>
+              </ul>
+            </li>
+          </ol>
+
+          <aside class="side">
+            <div class="block">
+              <h3>Education</h3>
+              <ul>
+                <li><strong>MSc Advanced Security Engineering</strong>FH JOANNEUM, 2013 – 2016</li>
+                <li><strong>BSc Software Design</strong>FH JOANNEUM, 2010 – 2013</li>
+                <li><strong>IT Database Engineering Certification</strong>WIFI Graz, 2001 (Oracle)</li>
+              </ul>
+            </div>
+            <div class="block">
+              <h3>Certifications</h3>
+              <ul>
+                <li><strong>Eggplant DAI &amp; Functional</strong>Keysight Technologies, 2025</li>
+                <li><strong>Oracle ADF / J2EE Development</strong>Oracle Austria, 2005</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Open source ================= -->
+    <section class="section" id="open-source" aria-labelledby="oss-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Open source</span>
+          <h2 id="oss-title">Code merged into projects you depend on</h2>
+          <p>Bug fixes, performance improvements and test coverage across major Java ecosystems. More on <a href="https://github.com/TheRealHaui">GitHub</a>.</p>
+        </div>
+        <ul class="oss">
+          <li><a href="https://github.com/apache/commons-text/pull/728"><strong>Apache Commons Text</strong></a><span>100% test coverage of the similarity package; credited in the 1.15.0 release notes</span></li>
+          <li><a href="https://github.com/google/guava/pull/2825"><strong>Google Guava</strong></a><span>Test coverage additions</span></li>
+          <li><a href="https://github.com/jetty/jetty.project/pull/3657"><strong>Eclipse Jetty</strong></a><span>Performance improvements</span></li>
+          <li><a href="https://github.com/apache/maven/pull/11470"><strong>Apache Maven</strong></a><span>Test coverage additions</span></li>
+          <li><a href="https://github.com/helidon-io/helidon/pull/711"><strong>Oracle Helidon</strong></a><span>Performance improvements</span></li>
+          <li><a href="https://github.com/apache/commons-compress/pull/35"><strong>Apache Commons Compress</strong></a><span>COMPRESS-412 bug fix</span></li>
+          <li><a href="https://github.com/apache/commons-lang/pull/1506"><strong>Apache Commons Lang</strong></a><span>Overload-resolution fix in NumberUtils tests</span></li>
+          <li><a href="https://github.com/oracle/tribuo/pull/415"><strong>Oracle Tribuo</strong></a><span>Test coverage additions</span></li>
+          <li><a href="https://github.com/JodaOrg/joda-time/pull/438"><strong>Joda-Time</strong></a><span>NPE fix in TestZoneInfoCompiler</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================= Contact ================= -->
+    <section class="section section-alt" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <div class="contact-card">
+          <div>
+            <span class="eyebrow">Contact</span>
+            <h2 id="contact-title">Let's talk</h2>
+            <p class="muted">Need RL environments for database or performance engineering, an architect for a hard problem, or a slow database fixed? Email is the fastest way to reach me. I usually reply within a day.</p>
+            <div class="btn-row mt">
+              <a class="btn btn-primary" href="mailto:michael.hausegger@hausegger.tech">Email me</a>
+            </div>
+            <!-- Deliberately one quiet line: a loud "hire me" would undercut the freelance/vendor positioning. -->
+            <p class="also">Also open to full-time remote roles with US teams.</p>
+          </div>
+          <ul class="contact-links">
+            <li><span class="label">Email</span><a href="mailto:michael.hausegger@hausegger.tech">michael.hausegger@hausegger.tech</a></li>
+            <li><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/michael-hausegger/">linkedin.com/in/michael-hausegger</a></li>
+            <li><span class="label">GitHub</span><a href="https://github.com/TheRealHaui">github.com/TheRealHaui</a></li>
+            <li><span class="label">Location</span><span>Graz, Austria (CET/CEST), remote worldwide</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Michael Hausegger</span>
+      <nav aria-label="Legal">
+        <a href="impressum.html">Impressum</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- GoatCounter: cookieless, no personal data stored, so no consent banner is needed.
+       count.js is self-hosted so the only third-party request is the page-view ping itself.
+       It skips localhost automatically, so local previews are never counted. -->
+  <script data-goatcounter="https://hausegger.goatcounter.com/count" async src="assets/js/count.js"></script>
+</body>
+</html>
